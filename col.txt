@@ -1,0 +1,59 @@
+columns ref([
+        {
+          title '排名',
+          width 60,
+          dataIndex 'rank',
+          slot 'rank'
+        },
+        {
+          title '游戏名',
+          width 30,
+          dataIndex 'name'
+        },
+        {
+          title '平台',
+          width 50,
+          dataIndex 'platform',
+          slot 'platform'
+        },
+        {
+          title '年份',
+          width 30,
+          dataIndex 'year'
+        },
+        {
+          title '类型',
+          width 100,
+          dataIndex 'genre'
+        },
+        {
+          title 发行商,
+          width 100,
+          dataIndex 'publisher'
+        },
+        {
+          title NA_Sales,
+          width 100,
+          dataIndex 'na_sales'
+        },
+        {
+          title EU_Sales,
+          width 100,
+          dataIndex 'eu_sales'
+        },
+        {
+          title JP_Sales,
+          width 100,
+          dataIndex 'jp_sales'
+        },
+        {
+          title Other_Sales,
+          width 100,
+          dataIndex 'other_sales'
+        },
+        {
+          title Global_Sales,
+          width 100,
+          dataIndex 'global_sales'
+        }
+      ]),
