@@ -1,3 +1,4 @@
+
 # vue-project
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -27,3 +28,9 @@ npm run dev
 ```sh
 npm run build
 ```
+
+修改src/components目录下：
+Page1.vue # 王
+Page2.vue #周
+Page3.vue #崔
+Page4.vue #刘
