@@ -1,13 +1,14 @@
 <!--
  * @Author: lijun lijun@ljsea.top
  * @Date: 2023-10-07 17:18:45
- * @LastEditors: lijun lijun@ljsea.top
- * @LastEditTime: 2023-10-08 16:36:08
+ * @LastEditors: lijun lijun.lj@foxmail.com
+ * @LastEditTime: 2023-11-02 20:08:34
  * @FilePath: \undefinedf:\Code\WebStorm\vue-project\src\App.vue
  * @Description: -=>
  -->
 <template>
   <div>
+    <div>
     <div>GET返回数据:{{ items }}</div>
   </div>
 
@@ -30,6 +31,13 @@
 
     <div>post返回数据:{{ post }}</div>
   </div>
+  </div>
+
+  <div>
+    <button @click="go">点我跳转</button>
+  <router-link to="/Page1">Page1</router-link>
+  </div>
+
 </template>  
   
 <script>
@@ -72,6 +80,11 @@ export default {
     mounted() {
       this.initData();
     },
+    go(){
+      console.log("Page1")
+  		this.$router.push( '/Page1' )
+  	}
+
   }
 }  
 </script>

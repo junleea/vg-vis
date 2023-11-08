@@ -3,6 +3,11 @@ defineProps({
   msg: {
     type: String,
     required: true
+  },
+  methods:{
+    go(){
+  		this.$router.push('/Page1')
+  	}
   }
 })
 </script>
@@ -16,6 +21,7 @@ defineProps({
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
     </h3>
   </div>
+  <button @click="go">点我跳转</button>
 </template>
 
 <style scoped>
