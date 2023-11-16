@@ -1,56 +1,85 @@
 <template>
-	<h1>Chart</h1>
-	<div class="Echarts">
-    <div id="main" style="width: 600px;height:400px;"></div>
+  <h1>Chart</h1>
+  <div class="Echarts">
+    <div id="page3" style="width: 800px; height: 600px"></div>
   </div>
 </template>
+   <script>
+import { ref } from "vue";
+import axios from "axios";
+import * as echarts from "echarts";
 
-<script>
-import { ref } from 'vue'
-import axios from 'axios'
-import * as  echarts from 'echarts'
-  
 export default {
-    data() {
-      return {
-        items: [],
-        name: "",
-        age: "",
-        post: []
-      }
+  data() {
+    return {
+      items: [],
+      name: [],
+      source: [],
+      target: [],
+      value: [],
+      post: [],
+    };
+  },
+  methods: {
+    initData() {
+      axios
+        .get("http://114.115.206.93:5000/get_sankey_data")
+        .then((response) => {
+          //由于桑吉图只需要nodes和links两个数据，所以只取这两个数据
+          this.name = response.data.nodes;
+          this.source = response.data.links;
+          this.myEcharts(); // 在数据获取后，再调用myEcharts()方法绘制图表
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
-    methods:{
-	  myEcharts(){
-		  // 基于准备好的dom，初始化echarts实例
-		  var myChart = echarts.init(document.getElementById('main'));
+    postGetData() {
+      axios
+        .post("http://114.115.206.93:5000/post_sankey_data")
+        .then((response) => {
+          this.post = response.data;
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async mounted() {
+      await this.initData();
+      console.log(this.items);
+    },
+    created() {
+      this.initData();
+      console.log(this.items);
+    },
 
-		  // 指定图表的配置项和数据
-		  var option = {
-			  title: {
-				  text: 'ECharts 入门示例'
-			  },
-			  tooltip: {},
-			  legend: {
-				  data:['销量']
-			  },
-			  xAxis: {
-				  data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-			  },
-			  yAxis: {},
-			  series: [{
-				  name: '销量',
-				  type: 'bar',
-				  data: [5, 20, 36, 10, 10, 20]
-			  }]
-		  };
-
-		  // 使用刚指定的配置项和数据显示图表。
-		  myChart.setOption(option);
-		  }
+    myEcharts() {
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById("page3"));
+      // 指定图表的配置项和数据
+      var option = {
+        series: {
+          type: "sankey",
+          layout: "none",
+          focusNodeAdjacency: "true",
+          data: this.name,
+          links: this.source,
+          emphasis: {
+            focus: "adjacency",
+          },
+          lineStyle: {
+            color: "gradient",
+            curveness: 0.5,
+          },
+        },
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    },
   },
   mounted() {
-  	this.myEcharts();
-  }
-}
-
+    this.initData(); // 在组件挂载时首先获取数据
+  },
+};
 </script>

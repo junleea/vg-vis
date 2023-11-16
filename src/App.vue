@@ -1,14 +1,6 @@
-<!--
- * @Author: lijun lijun@ljsea.top
- * @Date: 2023-10-07 17:18:45
- * @LastEditors: lijun 2021141461138@stu.scu.edu.cn
- * @LastEditTime: 2023-11-08 19:23:17
- * @FilePath: \undefinedf:\Code\WebStorm\vue-project\src\App.vue
- * @Description: -=>
- -->
 <template>
-  <div id="app">
-    <div id="header">    
+  <!-- <div id="app">
+    <div id="header">
       <router-link to="/">Home</router-link>
       <router-link to="/Page1">Page1</router-link>
       <router-link to="/Page2">Page2</router-link>
@@ -17,15 +9,38 @@
     </div>
     <div id="page">
       <router-view></router-view>
-    </div>   
+    </div>
+    <div>
+      <div style="margin-top: 20px;">
+        <Page1 style="left: 20px;"></Page1>
+        <Page2 style="right: 20px;"></Page2>
+      </div>
+      <Page3></Page3>
+    </div>
+  </div> -->
+  <div class="container">
+    <div class="part1">
+      <Page3></Page3>
+    </div>
+
+    <div class="part2">
+      <Page2></Page2>
+    </div>
+
+    <div class="part3">Part 3</div>
+
+    <div class="part4">Part 4</div>
   </div>
 </template>  
   
 <script>
 import axios from "axios";
 import { ref } from "vue";
-
+import Page1 from "./components/Page1.vue";
+import Page3 from "./components/Page3.vue";
+import Page2 from "./components/Page2.vue";
 export default {
+  components: { Page1, Page2, Page3 },
   data() {
     return {
       items: [],
@@ -36,7 +51,7 @@ export default {
   },
 
   methods: {
-    initData() {
+    async initData() {
       axios
         .get("http://114.115.206.93:5000/get_info")
         .then((response) => {
@@ -54,19 +69,37 @@ export default {
         })
         .then((response) => {
           this.post = response.data;
-          console.log(response.data);
         })
         .catch((error) => {
           console.error(error);
         });
     },
-    mounted() {
-      this.initData();
+    async mounted() {
+      await this.postGetData();
+      dd;
+      console.log(this.post);
     },
-    go() {
-      console.log("Page1");
-      this.$router.push("/Page1");
+    created() {
+      this.postGetData();
+      console.log(this.post);
     },
   },
 };
 </script>
+<style>
+.page1 {
+  position: relative;
+  top: auto !important;
+  left: auto !important;
+}
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  grid-gap: 20px;
+}
+body {  
+background-color: white;  
+
+}  
+</style>

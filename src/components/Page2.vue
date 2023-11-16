@@ -1,74 +1,112 @@
 <template>
-  <div class="echarts-box">
-    <div id="myEcharts" :style="{ width: this.width, height: this.height }"></div>
+  <h1>河流图----每年游戏类型数目</h1>
+  <div class="Echarts">
+    <div id="page2" style="width: 600px; height: 400px"></div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import axios from "axios";
 import * as echarts from "echarts";
-import {onMounted, onUnmounted} from "vue";
 
 export default {
-  name: "App",
-  props: ["width", "height"],
-  setup() {
-    let myEcharts = echarts;
+  data() {
+    return {
+      items: [],
+      legend: [],
+      data: [],
+      post: [],
+    };
+  },
+  methods: {
+    initData() {
+      axios
+        .get("http://114.115.206.93:5000/get_type_data")
+        .then((Response) => {
+          this.items = Response.data;
+          this.legend = this.items.Genre;
+          this.data = this.items.data;
+          this.legend = JSON.parse(this.legend.replace(/'/g, '"'));
+          this.data = JSON.parse(this.data.replace(/'/g, '"'));
+          console.log(this.legend);
+          console.log(this.data);
 
-    onMounted(() => {
-      initChart();
-    });
+          this.myEcharts();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    myEcharts() {
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById("page2"));
 
-    onUnmounted(() => {
-      myEcharts.dispose;
-    });
-
-    function initChart() {
-      let chart = myEcharts.init(document.getElementById("myEcharts"), "purple-passion");
-      chart.setOption({
-        title: {
-          text: "2021年各月份销售量（单位：件）",
-          left: "center",
-        },
-        xAxis: {
-          type: "category",
-          data: [
-            "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"
-          ]
-        },
+      // 指定图表的配置项和数据
+      var option = {
         tooltip: {
-          trigger: "axis"
+          trigger: "axis",
+          axisPointer: {
+            type: "line",
+            lineStyle: {
+              color: "rgba(0,0,0,0.2)",
+              width: 1,
+              type: "solid",
+            },
+          },
         },
-        yAxis: {
-          type: "value"
+        legend: {
+          data: this.legend,
+          //data: this.te
+        },
+        /*  yAxis: {
+    min: 10,
+    max:50
+  }, */
+        singleAxis: {
+          top: 50,
+          bottom: 50,
+          min: 1980,
+          max: 2016,
+          axisTick: {},
+          axisLabel: {},
+          type: "value",
+          axisPointer: {
+            animation: true,
+            label: {
+              show: true,
+            },
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              type: "dashed",
+              opacity: 0.2,
+            },
+          },
         },
         series: [
           {
-            data: [
-              606, 542, 985, 687, 501, 787, 339, 706, 383, 684, 669, 737
-            ],
-            type: "line",
-            smooth: true,
-            itemStyle: {
-              normal: {
-                label: {
-                  show: true,
-                  position: "top",
-                  formatter: "{c}"
-                }
-              }
-            }
-          }
-        ]
-      });
-      window.onresize = function () {
-        chart.resize();
+            type: "themeRiver",
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 20,
+                shadowColor: "rgba(0, 0, 0, 0.8)",
+              },
+            },
+            data: this.data,
+            //data:this.td
+          },
+        ],
       };
-    }
 
-    return {
-      initChart
-    };
-  }
+      if (option && typeof option === "object") {
+        myChart.setOption(option);
+      }
+    },
+  },
+  mounted() {
+    this.initData();
+  },
 };
 </script>
-
