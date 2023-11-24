@@ -1,5 +1,5 @@
 <template>
-  <h1>Chart</h1>
+  <h1>桑吉图--游戏、类型、各地区销量关系</h1>
   <div class="Echarts">
     <div id="page3" style="width: 800px; height: 600px"></div>
   </div>
@@ -23,7 +23,10 @@ export default {
   methods: {
     initData() {
       axios
-        .get("http://114.115.206.93:5000/get_sankey_data")
+        .post("http://114.115.206.93:5000/get_sankey_data",{
+          "min":0,
+          "max":50
+        })
         .then((response) => {
           //由于桑吉图只需要nodes和links两个数据，所以只取这两个数据
           this.name = response.data.nodes;

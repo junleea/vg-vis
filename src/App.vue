@@ -30,6 +30,9 @@
     <div class="part3">Part 3</div>
 
     <div class="part4">Part 4</div>
+    <div class="part5">
+      <Page5></Page5>
+    </div>
   </div>
 </template>  
   
@@ -39,8 +42,9 @@ import { ref } from "vue";
 import Page1 from "./components/Page1.vue";
 import Page3 from "./components/Page3.vue";
 import Page2 from "./components/Page2.vue";
+import Page5 from "./components/Page5.vue";
 export default {
-  components: { Page1, Page2, Page3 },
+  components: { Page1, Page2, Page3 , Page5},
   data() {
     return {
       items: [],
@@ -64,20 +68,19 @@ export default {
     postGetData() {
       axios
         .post("http://114.115.206.93:5000/post_info", {
-          name: this.name,
-          age: this.age,
+          min: 0, 
+          max: 100,
         })
         .then((response) => {
           this.post = response.data;
+          console.log("post:",this.post);
         })
         .catch((error) => {
           console.error(error);
         });
     },
-    async mounted() {
-      await this.postGetData();
-      dd;
-      console.log(this.post);
+    mounted() {
+      this.postGetData();
     },
     created() {
       this.postGetData();

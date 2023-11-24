@@ -29,9 +29,6 @@ export default {
           this.data = this.items.data;
           this.legend = JSON.parse(this.legend.replace(/'/g, '"'));
           this.data = JSON.parse(this.data.replace(/'/g, '"'));
-          console.log(this.legend);
-          console.log(this.data);
-
           this.myEcharts();
         })
         .catch((error) => {
@@ -59,10 +56,6 @@ export default {
           data: this.legend,
           //data: this.te
         },
-        /*  yAxis: {
-    min: 10,
-    max:50
-  }, */
         singleAxis: {
           top: 50,
           bottom: 50,
