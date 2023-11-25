@@ -1,16 +1,16 @@
 <template>
   <div id="race-chart">
     <div id="selectSection">
-      <select name="category" id="category">
+      <select v-model="selectCategory" name="category" id="category">
         <option value="publisher">发行商</option>
         <option value="platform">游戏平台</option>
       </select>
-      <select name="category" id="area">
-        <option value="all_area">所有地区</option>
-        <option value="eu">欧洲</option>
-        <option value="jp">日本</option>
-        <option value="na">北美</option>
-        <option value="ot">其它地区</option>
+      <select v-model="selectArea" name="category" id="area">
+        <option value="Global_Sales">所有地区</option>
+        <option value="EU_Sales">欧洲</option>
+        <option value="JP_Sales">日本</option>
+        <option value="NA_Sales">北美</option>
+        <option value="Other_Sales">其它地区</option>
       </select>
       <button @click="onGenerate">播放</button>
     </div>
@@ -98,13 +98,17 @@ export default {
   data() {
     return {
       raceChartData: [],
+      selectArea:"Global_Sales",
+      selectCategory:"publisher",
     };
   },
   methods: {
     async init() {
       rawData = await this.loadData();
       console.log("rawData", rawData[0]);
+      
       names = new Set(rawData.map((d) => d.name));
+      await d3.select("#race-chart-graph").select("svg").remove();
       //svg画布
       svg = d3
         .select("#race-chart-graph")
@@ -116,7 +120,10 @@ export default {
     async loadData() {
       var raceChartData = [];
       await  axios
-        .get("http://114.115.206.93:5000/get_race_chart_data")
+        .post("http://114.115.206.93:5000/get_race_chart_data",{
+          "type":this.selectCategory,
+          "area":this.selectArea
+        })
         .then((response) => {
           raceChartData = response.data;
         })
@@ -269,8 +276,7 @@ function labels(svg) {
           .call((g) =>
             g
               .select("tspan")
-              .tween("text", (d) =>
-                textTween((prev.get(d) || d).value, d.value)
+              .tween("text", (d) => textTween((prev.get(d) || d).value, d.value)
               )
           )
       ));
