@@ -1,56 +1,134 @@
 <template>
-	<h1>Chart</h1>
-	<div class="Echarts">
-    <div id="main" style="width: 600px;height:400px;"></div>
+
+  <div class="Echarts">
+    <div id="pie" style="width: 600px; height: 400px"></div>
+  </div>
+  <div class="Echarts">
+    <h1>不同游戏类型在不同地区销量</h1>
+    <div id="blchart" style="width: 600px; height: 400px"></div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import axios from 'axios'
-import * as  echarts from 'echarts'
-  
+import { ref } from "vue";
+import axios from "axios";
+import * as echarts from "echarts";
+
 export default {
-    data() {
-      return {
-        items: [],
-        name: "",
-        age: "",
-        post: []
-      }
+  data() {
+    return {
+      items: [],
+      name: "",
+      age: "",
+      post: [],
+    };
+  },
+  methods: {
+    initData() {
+      axios
+        .get("http://114.115.206.93:5000/get_zx_info")
+        .then((response) => {
+          //由于桑吉图只需要nodes和links两个数据，所以只取这两个数据
+          this.data = response.data.piechart;
+		  this.data1 = response.data.blchart;
+          this.initPie(); // 在数据获取后，再调用initBie()方法绘制图表
+		  this.initBlchart();
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
-    methods:{
-	  myEcharts(){
-		  // 基于准备好的dom，初始化echarts实例
-		  var myChart = echarts.init(document.getElementById('main'));
+    initBlchart() {
+      var chartDom = document.getElementById("blchart"); //渲染的位置
+      var myChart = echarts.init(chartDom);
+      var option;
 
-		  // 指定图表的配置项和数据
-		  var option = {
-			  title: {
-				  text: 'ECharts 入门示例'
-			  },
-			  tooltip: {},
-			  legend: {
-				  data:['销量']
-			  },
-			  xAxis: {
-				  data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-			  },
-			  yAxis: {},
-			  series: [{
-				  name: '销量',
-				  type: 'bar',
-				  data: [5, 20, 36, 10, 10, 20]
-			  }]
-		  };
+      option = {
+        title: {
+          text: "",
+        },
+        tooltip: {
+          trigger: "axis",
+        },
+        legend: {
+          data: [
+            "Action",
+            "Adventure",
+            "Fighting",
+            "Misc",
+            "Platform",
+            "Puzzle",
+            "Racing",
+            "Role-Playing",
+            "Shooter",
+            "Simulation",
+          ],
+        },
+        grid: {
+          left: "3%",
+          right: "6%",
+          bottom: "3%",
+          containLabel: true,
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {},
+          },
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: ["EU_Sales", "JP_Sales", "NA_Sales", "Other_Sales"],
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: this.data1,
+      };
 
-		  // 使用刚指定的配置项和数据显示图表。
-		  myChart.setOption(option);
-		  }
+      option && myChart.setOption(option);
+    },
+    initPie() {
+      var chartDom = document.getElementById("pie"); //渲染的位置
+      var myChart = echarts.init(chartDom);
+      var option;
+
+      option = {
+        title: {
+          text: "世界游戏公司销量占比",
+          /*subtext: 'Fake Data',*/
+          left: "center",
+        },
+        tooltip: {
+          trigger: "item",
+        },
+        legend: {
+          orient: "vertical",
+          left: "left",
+        },
+        series: [
+          {
+            name: "Access From",
+            center: ["75%", "62%"],
+            type: "pie",
+            radius: "50%",
+            data: this.data,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+            },
+          },
+        ],
+      };
+
+      option && myChart.setOption(option);
+    },
   },
   mounted() {
-  	this.myEcharts();
-  }
-}
-
+    this.initData();
+  },
+};
 </script>

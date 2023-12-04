@@ -54,6 +54,8 @@ export default {
         },
         legend: {
           data: this.legend,
+          color: ['#FFDAB9', '#F0FFF0', '#6A5ACD', '#5470c6',
+          '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],
           //data: this.te
         },
         singleAxis: {

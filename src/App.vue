@@ -26,12 +26,11 @@
     <div class="part2">
       <Page2></Page2>
     </div>
-
-    <div class="part3">Part 3</div>
-
-    <div class="part4">Part 4</div>
     <div class="part5">
       <Page5></Page5>
+    </div>
+    <div>
+      <Page1></Page1>
     </div>
   </div>
 </template>  

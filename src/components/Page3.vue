@@ -62,6 +62,9 @@ export default {
       var myChart = echarts.init(document.getElementById("page3"));
       // 指定图表的配置项和数据
       var option = {
+        textStyle:{
+          lineHeight: 100,
+        },
         series: {
           type: "sankey",
           layout: "none",

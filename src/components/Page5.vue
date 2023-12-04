@@ -5,7 +5,7 @@
         <option value="publisher">发行商</option>
         <option value="platform">游戏平台</option>
       </select>
-      <select v-model="selectArea" name="category" id="area">
+      <select v-model="selectArea" name="area" id="area">
         <option value="Global_Sales">所有地区</option>
         <option value="EU_Sales">欧洲</option>
         <option value="JP_Sales">日本</option>
@@ -14,12 +14,17 @@
       </select>
       <button @click="onGenerate">播放</button>
     </div>
+    <div>
+      <p>race chart bar图----展示随时间变化的给厂商或平台的发售数据</p>
+      <p>选择发行商或平台，选择地区，点击播放按钮</p>
+      <p>单位：十万美元</p>
+    </div>
     <div id="race-chart-graph"></div>
   </div>
 </template>
   
   <script>
-  import axios from 'axios';
+import axios from "axios";
 import * as d3 from "d3";
 // 原始数据
 console.log("begin to get data!");
@@ -57,7 +62,7 @@ function rank(value) {
 function keyframes() {
   const keyframes = [];
   let ka, a, kb, b;
-console.log("datevalues",datevalues);
+  console.log("datevalues", datevalues);
   for ([[ka, a], [kb, b]] of d3.pairs(datevalues)) {
     for (let i = 0; i < k; ++i) {
       const t = i / k;
@@ -67,7 +72,7 @@ console.log("datevalues",datevalues);
       ]);
     }
   }
-  console.log("b=",b);
+  console.log("b=", b);
   keyframes.push([new Date(kb), rank((name) => b.get(name) || 0)]);
   return keyframes;
 }
@@ -98,15 +103,15 @@ export default {
   data() {
     return {
       raceChartData: [],
-      selectArea:"Global_Sales",
-      selectCategory:"publisher",
+      selectArea: "Global_Sales",
+      selectCategory: "publisher",
     };
   },
   methods: {
     async init() {
       rawData = await this.loadData();
       console.log("rawData", rawData[0]);
-      
+
       names = new Set(rawData.map((d) => d.name));
       await d3.select("#race-chart-graph").select("svg").remove();
       //svg画布
@@ -119,10 +124,10 @@ export default {
     //读取csv数据
     async loadData() {
       var raceChartData = [];
-      await  axios
-        .post("http://114.115.206.93:5000/get_race_chart_data",{
-          "type":this.selectCategory,
-          "area":this.selectArea
+      await axios
+        .post("http://114.115.206.93:5000/get_race_chart_data", {
+          type: this.selectCategory,
+          area: this.selectArea,
         })
         .then((response) => {
           raceChartData = response.data;
@@ -183,6 +188,7 @@ export default {
   },
 };
 
+
 function bars(svg) {
   let bar = svg.append("g").attr("fill-opacity", 0.6).selectAll("rect");
 
@@ -193,7 +199,7 @@ function bars(svg) {
         (enter) =>
           enter
             .append("rect")
-            .attr("fill", (d, i) => d3.schemeTableau10[d3.randomInt(10)()])
+            .attr("fill",(d, i) =>d3.schemeTableau10[i%20+1])  //(d, i) => d3.schemeTableau10[d3.randomInt(12)()]
             .attr("height", y.bandwidth())
             .attr("x", x(0))
             .attr("y", (d) => y((prev.get(d) || d).rank))
@@ -276,7 +282,8 @@ function labels(svg) {
           .call((g) =>
             g
               .select("tspan")
-              .tween("text", (d) => textTween((prev.get(d) || d).value, d.value)
+              .tween("text", (d) =>
+                textTween((prev.get(d) || d).value, d.value)
               )
           )
       ));
@@ -337,6 +344,18 @@ function ticker(svg) {
 }
 #category {
   color: #273747;
+  font-family: helvetica;
+  font-size: 0.875rem;
+  width: 5.625rem;
+  height: 1.75rem;
+  border: 0.125rem solid rgb(43, 189, 218);
+  appearance: none;
+  background-color: rgb(235, 239, 242);
+  background: url(../assets/down.png) 4.0625rem center no-repeat;
+  padding-left: 0.3125rem;
+}
+#area {
+  color: rgb(63, 71, 39);
   font-family: helvetica;
   font-size: 0.875rem;
   width: 5.625rem;
