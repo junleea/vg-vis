@@ -20,12 +20,15 @@
       <p>单位：十万美元</p>
     </div>
     <div id="race-chart-graph"></div>
+    <div id="word-cloud-graph"></div>
   </div>
 </template>
   
   <script>
 import axios from "axios";
 import * as d3 from "d3";
+import * as cloud from "d3-cloud";
+
 // 原始数据
 console.log("begin to get data!");
 var rawData = [];
@@ -47,6 +50,8 @@ var names;
 var datevalues;
 var k = 10;
 var duration = 140;
+
+var myWordCloud; // 词云
 
 function rank(value) {
   const data = Array.from(names, (name) => ({
@@ -103,15 +108,20 @@ export default {
   data() {
     return {
       raceChartData: [],
+      wordcloud:[],
       selectArea: "Global_Sales",
       selectCategory: "publisher",
     };
   },
+  onCreate: function() {
+    this.onGenerate();
+   },
   methods: {
     async init() {
       rawData = await this.loadData();
       console.log("rawData", rawData[0]);
-
+      console.log("word", this.wordcloud[0]);
+      myWordCloud = wordCloud('#word-cloud-graph');
       names = new Set(rawData.map((d) => d.name));
       await d3.select("#race-chart-graph").select("svg").remove();
       //svg画布
@@ -121,7 +131,7 @@ export default {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
     },
-    //读取csv数据
+    //读取数据
     async loadData() {
       var raceChartData = [];
       await axios
@@ -130,7 +140,8 @@ export default {
           area: this.selectArea,
         })
         .then((response) => {
-          raceChartData = response.data;
+          raceChartData = response.data.race;
+          this.wordcloud=response.data.word;
         })
         .catch((error) => {
           console.error(error);
@@ -165,6 +176,7 @@ export default {
       await this.init();
       procData(category);
       console.log("begin to category");
+      myWordCloud.update(this.wordcloud);
       datevalues = Array.from(
         d3.rollup(
           data,
@@ -188,7 +200,6 @@ export default {
   },
 };
 
-
 function bars(svg) {
   let bar = svg.append("g").attr("fill-opacity", 0.6).selectAll("rect");
 
@@ -199,7 +210,7 @@ function bars(svg) {
         (enter) =>
           enter
             .append("rect")
-            .attr("fill",(d, i) =>d3.schemeTableau10[i%20+1])  //(d, i) => d3.schemeTableau10[d3.randomInt(12)()]
+            .attr("fill", (d, i) => d3.schemeTableau10[d3.randomInt(12)()]) //(d, i) => d3.schemeTableau10[d3.randomInt(12)()]
             .attr("height", y.bandwidth())
             .attr("x", x(0))
             .attr("y", (d) => y((prev.get(d) || d).rank))
@@ -333,6 +344,69 @@ function ticker(svg) {
 
   return ([date], transition) => {
     transition.end().then(() => now.text(formatDate(date)));
+  };
+}
+
+
+
+const w_width = 800
+const w_height =600
+var rot = 0
+//词云
+function wordCloud(selector) {
+  var svg = d3
+    .select(selector)
+    .append("svg")
+    .attr("width", w_width)
+    .attr("height", w_height)
+    .append("g")
+    .attr("transform", "translate(" + w_width / 2 + "," + w_height / 2 + ")");
+  console.log("word has build!" );
+  var fill = d3.scaleOrdinal(d3.schemeTableau10);
+  function draw(words) {
+    var cloud = svg.selectAll(".cloud").data(words, (d) => d.text);
+
+    cloud
+      .enter()
+      .append("text")
+      .attr("class", "cloud")
+      .style("font-family", "Helvetica")
+      .style("fill", (d, i) => fill(i))
+      .attr("text-anchor", "middle")
+      .attr("font-size", 1)
+      .text((d) => d.text);
+
+    cloud
+      .transition()
+      .duration(600)
+      .attr("font-size", (d) => d.size + "px")
+      .attr("transform", function (d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .style("fill-opacity", 1);
+
+    cloud
+      .exit()
+      .transition()
+      .duration(200)
+      .style("fill-opacity", 1e-6)
+      .attr("font-size", 1)
+      .remove();
+  }
+
+  return {
+    update: function (words) {
+      console.log("words",words);
+      cloud()
+        .size([w_width, w_height])
+        .words(words)
+        .padding(5)
+        .rotate(() => ~~(Math.random() * 2) * 90 * (rot++ % 2))
+        .font("Helvetica")
+        .fontSize((d) => d.size)
+        .on("end", draw)
+        .start();
+    },
   };
 }
 </script>
