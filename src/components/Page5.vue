@@ -20,7 +20,7 @@
       <p>单位：十万美元</p>
     </div>
     <div id="race-chart-graph"></div>
-    <div id="word-cloud-graph"></div>
+    <div id="word-cloud-graph" style="width: 600px; height: 400px"></div>
   </div>
 </template>
   
@@ -28,6 +28,9 @@
 import axios from "axios";
 import * as d3 from "d3";
 import * as cloud from "d3-cloud";
+import * as echarts from "echarts";
+import "echarts-wordcloud/dist/echarts-wordcloud";
+import "echarts-wordcloud/dist/echarts-wordcloud.min";
 
 // 原始数据
 console.log("begin to get data!");
@@ -44,14 +47,12 @@ var margin = {
   left: 0,
 };
 var height = margin.top + barSize * n + margin.bottom;
-var width = 1000;
+var width = 800;
 
 var names;
 var datevalues;
 var k = 10;
 var duration = 140;
-
-var myWordCloud; // 词云
 
 function rank(value) {
   const data = Array.from(names, (name) => ({
@@ -108,20 +109,19 @@ export default {
   data() {
     return {
       raceChartData: [],
-      wordcloud:[],
+      wordcloud: [],
       selectArea: "Global_Sales",
       selectCategory: "publisher",
     };
   },
-  onCreate: function() {
+  created(){
     this.onGenerate();
-   },
+  },
   methods: {
     async init() {
       rawData = await this.loadData();
       console.log("rawData", rawData[0]);
       console.log("word", this.wordcloud[0]);
-      myWordCloud = wordCloud('#word-cloud-graph');
       names = new Set(rawData.map((d) => d.name));
       await d3.select("#race-chart-graph").select("svg").remove();
       //svg画布
@@ -131,6 +131,68 @@ export default {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
     },
+    initwordchart() {
+      var myChart = echarts.init(document.getElementById('word-cloud-graph'));
+			const option = {
+				title: {
+					text: '',
+					x: "center"
+				},
+				backgroundColor: "#fff",
+				// tooltip: {
+				//   pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
+				// },
+				series: [
+					{
+						type: "wordCloud",
+						//用来调整词之间的距离
+						gridSize: 10,
+						//用来调整字的大小范围
+						// Text size range which the value in data will be mapped to.
+						// Default to have minimum 12px and maximum 60px size.
+						sizeRange: [14, 40],
+						// Text rotation range and step in degree. Text will be rotated randomly in range [-90,                                                                             90] by rotationStep 45
+						//用来调整词的旋转方向，，[0,0]--代表着没有角度，也就是词为水平方向，需要设置角度参考注释内容
+						// rotationRange: [-45, 0, 45, 90],
+						// rotationRange: [ 0,90],
+						rotationRange: [-45,0, 45, 90],
+						//随机生成字体颜色
+						// maskImage: maskImage,
+						textStyle: {
+							color: function () {
+								return (
+									"rgb(" +
+									Math.round(Math.random() * 255) +
+									", " +
+									Math.round(Math.random() * 255) +
+									", " +
+									Math.round(Math.random() * 255) +
+									")"
+								);
+							}
+						},
+						//位置相关设置
+						// Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
+						// Default to be put in the center and has 75% x 80% size.
+						left: "center",
+						top: "center",
+						right: null,
+						bottom: null,
+						width: "100%",
+						height: "100%",
+						//数据
+						data: this.wordcloud
+					}
+				]
+			};
+			myChart.setOption(option);
+			// 点击某个字
+			myChart.on('click', function (params) {
+				console.log('myChart----click---:', params, '------', params.data)
+			});
+		
+    },
+
     //读取数据
     async loadData() {
       var raceChartData = [];
@@ -141,7 +203,7 @@ export default {
         })
         .then((response) => {
           raceChartData = response.data.race;
-          this.wordcloud=response.data.word;
+          this.wordcloud = response.data.word;
         })
         .catch((error) => {
           console.error(error);
@@ -172,11 +234,11 @@ export default {
     },
     //按钮点击播放后处理函数
     async onGenerate() {
-      let category = d3.select(this.$el).select("#category").node().value;
+      let category = this.selectCategory;
       await this.init();
       procData(category);
       console.log("begin to category");
-      myWordCloud.update(this.wordcloud);
+      this.initwordchart();
       datevalues = Array.from(
         d3.rollup(
           data,
@@ -344,69 +406,6 @@ function ticker(svg) {
 
   return ([date], transition) => {
     transition.end().then(() => now.text(formatDate(date)));
-  };
-}
-
-
-
-const w_width = 800
-const w_height =600
-var rot = 0
-//词云
-function wordCloud(selector) {
-  var svg = d3
-    .select(selector)
-    .append("svg")
-    .attr("width", w_width)
-    .attr("height", w_height)
-    .append("g")
-    .attr("transform", "translate(" + w_width / 2 + "," + w_height / 2 + ")");
-  console.log("word has build!" );
-  var fill = d3.scaleOrdinal(d3.schemeTableau10);
-  function draw(words) {
-    var cloud = svg.selectAll(".cloud").data(words, (d) => d.text);
-
-    cloud
-      .enter()
-      .append("text")
-      .attr("class", "cloud")
-      .style("font-family", "Helvetica")
-      .style("fill", (d, i) => fill(i))
-      .attr("text-anchor", "middle")
-      .attr("font-size", 1)
-      .text((d) => d.text);
-
-    cloud
-      .transition()
-      .duration(600)
-      .attr("font-size", (d) => d.size + "px")
-      .attr("transform", function (d) {
-        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-      })
-      .style("fill-opacity", 1);
-
-    cloud
-      .exit()
-      .transition()
-      .duration(200)
-      .style("fill-opacity", 1e-6)
-      .attr("font-size", 1)
-      .remove();
-  }
-
-  return {
-    update: function (words) {
-      console.log("words",words);
-      cloud()
-        .size([w_width, w_height])
-        .words(words)
-        .padding(5)
-        .rotate(() => ~~(Math.random() * 2) * 90 * (rot++ % 2))
-        .font("Helvetica")
-        .fontSize((d) => d.size)
-        .on("end", draw)
-        .start();
-    },
   };
 }
 </script>
