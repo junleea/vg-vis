@@ -1,23 +1,4 @@
 <template>
-  <!-- <div id="app">
-    <div id="header">
-      <router-link to="/">Home</router-link>
-      <router-link to="/Page1">Page1</router-link>
-      <router-link to="/Page2">Page2</router-link>
-      <router-link to="/Page3">Page3</router-link>
-      <router-link to="/Page4">Page4</router-link>
-    </div>
-    <div id="page">
-      <router-view></router-view>
-    </div>
-    <div>
-      <div style="margin-top: 20px;">
-        <Page1 style="left: 20px;"></Page1>
-        <Page2 style="right: 20px;"></Page2>
-      </div>
-      <Page3></Page3>
-    </div>
-  </div> -->
   <div class="container">
     <div class="part1">
       <Page3></Page3>
@@ -43,7 +24,7 @@ import Page3 from "./components/Page3.vue";
 import Page2 from "./components/Page2.vue";
 import Page5 from "./components/Page5.vue";
 export default {
-  components: { Page1, Page2, Page3 , Page5},
+  components: { Page1, Page2, Page3, Page5 },
   data() {
     return {
       items: [],
@@ -67,12 +48,12 @@ export default {
     postGetData() {
       axios
         .post("http://114.115.206.93:5000/post_info", {
-          min: 0, 
+          min: 0,
           max: 100,
         })
         .then((response) => {
           this.post = response.data;
-          console.log("post:",this.post);
+          console.log("post:", this.post);
         })
         .catch((error) => {
           console.error(error);
@@ -100,8 +81,7 @@ export default {
 
   grid-gap: 20px;
 }
-body {  
-background-color: white;  
-
-}  
+body {
+  background-color: white;
+}
 </style>

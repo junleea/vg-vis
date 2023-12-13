@@ -1,7 +1,7 @@
 <template>
   <h1>河流图----每年游戏类型数目</h1>
   <div class="Echarts">
-    <div id="page2" style="width: 600px; height: 400px"></div>
+    <div id="page2" style="width: 800px; height: 600px"></div>
   </div>
 </template>
 

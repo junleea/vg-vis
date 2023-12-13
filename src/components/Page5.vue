@@ -15,11 +15,14 @@
       <button @click="onGenerate">播放</button>
     </div>
     <div>
-      <p>race chart bar图----展示随时间变化的给厂商或平台的发售数据</p>
+      <p>竞赛条形图----展示随时间变化的给厂商或平台的发售数据</p>
       <p>选择发行商或平台，选择地区，点击播放按钮</p>
       <p>单位：十万美元</p>
     </div>
     <div id="race-chart-graph"></div>
+    <div>
+      <p>词云图----展示所选中的类型,厂商或平台的前十。</p>
+    </div>
     <div id="word-cloud-graph" style="width: 600px; height: 400px"></div>
   </div>
 </template>

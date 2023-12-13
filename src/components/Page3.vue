@@ -8,9 +8,7 @@
     <input type="range" v-model="min" min="0" max="10000" />
     <input type="number" v-model="max" placeholder="输入最大值" />
     <input type="range" v-model="max" min="0" max="10000" />
-
-    <p>你输入的最小值是：{{ min }}</p>
-    <p>你输入的最大值是：{{ max }}</p>
+    <p>输入的最大区间100</p>
     <p v-if="outOfRange">输入值超出范围！</p>
     <button @click="validateInput">获取数据</button>
   </div>
@@ -65,7 +63,7 @@ export default {
         this.min = "";
         this.max = "";
         alert("请输入有效的数字");
-      } else if (min <= 0 || max >= 10000 || min >= max || max - min >= 100) {
+      } else if (min < 0 || max >= 10000 || min >= max || max - min >= 100) {
         // 如果不满足条件，将输入框内容置为最后一次有效输入的值并给予用户提示
         this.min = this.max = "";
         alert(
