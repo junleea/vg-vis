@@ -1,7 +1,7 @@
 <template>
   <!-- <button style="text-align: center;align-items: center; justify-content: center;  ">按钮</button> -->
   <div>  
-    <h1 class="artistic-title">游戏兴衰----电子游戏销量数据可视化</h1>  
+    <h1 class="artistic-title">游戏解析：数据驱动的视角</h1>  
     <!-- 其他页面内容 -->  
   </div>  
   <div class="container">
