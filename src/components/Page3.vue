@@ -6,6 +6,7 @@
   <div>
     <input type="number" v-model="min" placeholder="输入最小值" />
     <input type="range" v-model="min" min="0" max="10000" />
+
     <input type="number" v-model="max" placeholder="输入最大值" />
     <input type="range" v-model="max" min="0" max="10000" />
     <p>输入的最大区间100</p>
@@ -63,7 +64,7 @@ export default {
         this.min = "";
         this.max = "";
         alert("请输入有效的数字");
-      } else if (min < 0 || max >= 10000 || min >= max || max - min >= 100) {
+      } else if (min < 0 || max > 10000 || min >= max || max - min > 100) {
         // 如果不满足条件，将输入框内容置为最后一次有效输入的值并给予用户提示
         this.min = this.max = "";
         alert(

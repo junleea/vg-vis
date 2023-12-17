@@ -1,9 +1,13 @@
 <template>
+  <!-- <button style="text-align: center;align-items: center; justify-content: center;  ">按钮</button> -->
+  <div>  
+    <h1 class="artistic-title">游戏兴衰----电子游戏销量数据可视化</h1>  
+    <!-- 其他页面内容 -->  
+  </div>  
   <div class="container">
     <div class="part1">
       <Page3></Page3>
     </div>
-
     <div class="part2">
       <Page2></Page2>
     </div>
@@ -18,7 +22,6 @@
   
 <script>
 import axios from "axios";
-import { ref } from "vue";
 import Page1 from "./components/Page1.vue";
 import Page3 from "./components/Page3.vue";
 import Page2 from "./components/Page2.vue";
@@ -78,10 +81,17 @@ export default {
 .container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-
   grid-gap: 20px;
 }
-body {
-  background-color: white;
+.body {
+  background-color: rgb(181, 190, 167);
 }
+.artistic-title {  
+  font-family: 'Arial', sans-serif;  
+  font-size: 40px;  
+  text-align: center;  
+  color: #333;  
+  text-transform: uppercase;  
+  letter-spacing: 2px;  
+}  
 </style>

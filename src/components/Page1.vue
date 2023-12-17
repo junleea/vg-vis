@@ -4,8 +4,7 @@
     <div id="pie" style="width: 600px; height: 400px"></div>
   </div>
   <div class="Echarts">
-    <h1>不同游戏类型在不同地区销量</h1>
-    <div id="blchart" style="width: 600px; height: 400px"></div>
+    <div id="blchart" style="width: 600px; height: 400px">不同游戏类型在不同地区销量</div>
   </div>
 </template>
 
@@ -78,7 +77,7 @@ export default {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["EU_Sales", "JP_Sales", "NA_Sales", "Other_Sales"],
+          data: ["欧洲", "日本", "北美", "其他"],
         },
         yAxis: {
           type: "value",
@@ -131,4 +130,12 @@ export default {
     this.initData();
   },
 };
+
 </script>
+<style>
+.Echarts{
+  display: flex; 
+  justify-content: center;
+   align-items: center;
+}
+</style>

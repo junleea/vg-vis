@@ -15,13 +15,13 @@
       <button @click="onGenerate">播放</button>
     </div>
     <div>
-      <p>竞赛条形图----展示随时间变化的给厂商或平台的发售数据</p>
+      <h1>竞赛条形图----展示随时间变化的给厂商或平台的发售数据</h1>
       <p>选择发行商或平台，选择地区，点击播放按钮</p>
       <p>单位：十万美元</p>
     </div>
-    <div id="race-chart-graph"></div>
+    <div id="race-chart-graph" style="width: 800px; height: 600px"></div>
     <div>
-      <p>词云图----展示所选中的类型,厂商或平台的前十。</p>
+      <h1>词云图----展示所选中的类型,厂商或平台的前二十.</h1>
     </div>
     <div id="word-cloud-graph" style="width: 600px; height: 400px"></div>
   </div>
@@ -117,7 +117,7 @@ export default {
       selectCategory: "publisher",
     };
   },
-  created(){
+  created() {
     this.onGenerate();
   },
   methods: {
@@ -135,65 +135,64 @@ export default {
         .attr("height", height + margin.top + margin.bottom);
     },
     initwordchart() {
-      var myChart = echarts.init(document.getElementById('word-cloud-graph'));
-			const option = {
-				title: {
-					text: '',
-					x: "center"
-				},
-				backgroundColor: "#fff",
-				// tooltip: {
-				//   pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
-				// },
-				series: [
-					{
-						type: "wordCloud",
-						//用来调整词之间的距离
-						gridSize: 10,
-						//用来调整字的大小范围
-						// Text size range which the value in data will be mapped to.
-						// Default to have minimum 12px and maximum 60px size.
-						sizeRange: [14, 40],
-						// Text rotation range and step in degree. Text will be rotated randomly in range [-90,                                                                             90] by rotationStep 45
-						//用来调整词的旋转方向，，[0,0]--代表着没有角度，也就是词为水平方向，需要设置角度参考注释内容
-						// rotationRange: [-45, 0, 45, 90],
-						// rotationRange: [ 0,90],
-						rotationRange: [-45,0, 45, 90],
-						//随机生成字体颜色
-						// maskImage: maskImage,
-						textStyle: {
-							color: function () {
-								return (
-									"rgb(" +
-									Math.round(Math.random() * 255) +
-									", " +
-									Math.round(Math.random() * 255) +
-									", " +
-									Math.round(Math.random() * 255) +
-									")"
-								);
-							}
-						},
-						//位置相关设置
-						// Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
-						// Default to be put in the center and has 75% x 80% size.
-						left: "center",
-						top: "center",
-						right: null,
-						bottom: null,
-						width: "100%",
-						height: "100%",
-						//数据
-						data: this.wordcloud
-					}
-				]
-			};
-			myChart.setOption(option);
-			// 点击某个字
-			myChart.on('click', function (params) {
-				console.log('myChart----click---:', params, '------', params.data)
-			});
-		
+      var myChart = echarts.init(document.getElementById("word-cloud-graph"));
+      const option = {
+        title: {
+          text: "",
+          x: "center",
+        },
+        backgroundColor: "#fff",
+        // tooltip: {
+        //   pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
+        // },
+        series: [
+          {
+            type: "wordCloud",
+            //用来调整词之间的距离
+            gridSize: 10,
+            //用来调整字的大小范围
+            // Text size range which the value in data will be mapped to.
+            // Default to have minimum 12px and maximum 60px size.
+            sizeRange: [14, 40],
+            // Text rotation range and step in degree. Text will be rotated randomly in range [-90,                                                                             90] by rotationStep 45
+            //用来调整词的旋转方向，，[0,0]--代表着没有角度，也就是词为水平方向，需要设置角度参考注释内容
+            // rotationRange: [-45, 0, 45, 90],
+            // rotationRange: [ 0,90],
+            rotationRange: [-45, 0, 45, 90],
+            //随机生成字体颜色
+            // maskImage: maskImage,
+            textStyle: {
+              color: function () {
+                return (
+                  "rgb(" +
+                  Math.round(Math.random() * 255) +
+                  ", " +
+                  Math.round(Math.random() * 255) +
+                  ", " +
+                  Math.round(Math.random() * 255) +
+                  ")"
+                );
+              },
+            },
+            //位置相关设置
+            // Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
+            // Default to be put in the center and has 75% x 80% size.
+            left: "center",
+            top: "center",
+            right: null,
+            bottom: null,
+            width: "100%",
+            height: "100%",
+            //数据
+            data: this.wordcloud,
+          },
+        ],
+      };
+      myChart.setOption(option);
+      // 点击某个字
+      myChart.on("click", function (params) {
+        console.log("myChart----click---:", params, "------", params.data);
+      });
     },
 
     //读取数据
@@ -267,7 +266,11 @@ export default {
 
 function bars(svg) {
   let bar = svg.append("g").attr("fill-opacity", 0.6).selectAll("rect");
-
+  // 创建一个线性颜色比例尺
+  var colorScale = d3
+    .scaleLinear()
+    .domain([0, 100]) // 输入范围从0到100
+    .range(["red", "purple"]); // 输出范围从红色到绿色
   return ([date, data], transition) =>
     (bar = bar
       .data(data.slice(0, n), (d) => d.name)
@@ -275,7 +278,7 @@ function bars(svg) {
         (enter) =>
           enter
             .append("rect")
-            .attr("fill", (d, i) => d3.schemeTableau10[d3.randomInt(12)()]) //(d, i) => d3.schemeTableau10[d3.randomInt(12)()]
+            .attr("fill", (d, i) => d3.schemeTableau10[d3.randomInt(14)()]) //(d, i) => d3.schemeTableau10[d3.randomInt(12)()]
             .attr("height", y.bandwidth())
             .attr("x", x(0))
             .attr("y", (d) => y((prev.get(d) || d).rank))
